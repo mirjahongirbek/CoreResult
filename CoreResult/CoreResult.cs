@@ -1,9 +1,11 @@
 ﻿using CoreResult;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using RepositoryCore.CoreState;
 using RepositoryCore.Enums;
 using RepositoryCore.Models;
 using RepositoryCore.Result;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace CoreResults
 {
@@ -18,44 +20,24 @@ namespace CoreResults
         {
 
         }
-        public NetResult(ModelStateDictionary modelState)
+        public NetResult(ModelStateDictionary modelState, [CallerMemberName] string caller = null)
         {
-            HttpContextHelper.SetStatusCode(ResponseStatusCore.BadRequest);
+            HttpContextHelper.SetStatusCode(StatusCore.BadRequest);
 
             foreach (var state in modelState)
             {
                 if (state.Value.ValidationState != ModelValidationState.Invalid)
                     continue;
-                Error = new ErrorResult { Code = (int)ResponseStatusCore.BadRequest, Message = $"{state.Key} не соответствует" };
+                Error = new ErrorResult { Code = (int)StatusCore.BadRequest, Message = $"{state.Key} не соответствует" };
                 break;
             }
         }
-
-        /// <summary>
-        /// Empty
-        /// </summary>
-        public NetResult(T result, ResponseStatusCore code)
+        public NetResult(T result, StatusCore code, [CallerMemberName] string caller = null)
         {
             HttpContextHelper.SetStatusCode(code);
             Result = result;
         }
-        public static NetResult<Result> NewResult(string message)
-        {
-
-            return null;
-        }
-        public static NetResult<Result> NewResult(int id)
-        {
-            Result response = new Result() { Code = id };
-            var result = new NetResult<Result>();
-            result.Result = response;
-
-            return result;
-        }
-        /// <summary>
-        /// string Error
-        /// </summary>
-        public NetResult(string message, ResponseStatusCore code)
+        public NetResult(string message, StatusCore code, [CallerMemberName] string caller = null)
         {
             HttpContextHelper.SetStatusCode(code);
             StatusCode = HttpContextHelper.GetStatusCode(code);
@@ -77,48 +59,17 @@ namespace CoreResults
                     break;
             }
         }
-
-        /// <summary>
-        /// Result is exist
-        /// </summary>
-        /// <param name="isSuccess"></param>
-        public NetResult(bool isSuccess)
+        public NetResult(bool isSuccess, [CallerMemberName] string caller = null)
         {
-            HttpContextHelper.SetStatusCode(ResponseStatusCore.OK);
-
-            //Result =new T { };
+            HttpContextHelper.SetStatusCode(StatusCore.OK);
         }
-
-        /// <summary>
-        /// Result or Error is exist
-        /// </summary>
-        /// <param name="response"></param>
-        /// <param name="code"></param>
-        //TODO change
-            //public NetResult(CoreResult response, ResponseStatusCore code)
-        //{
-        //    HttpContextHelper.SetStatusCode(code);
-        //    Result = response.Result;
-        //    Error = response.Error;
-        //}
-
-        /// <summary>
-        /// Error is exist
-        /// </summary>
-        /// <param name="errorResult"></param>
-        /// <param name="code"></param>
-        public NetResult(ErrorResult errorResult, ResponseStatusCore code)
+        public NetResult(ErrorResult errorResult, StatusCore code, [CallerMemberName] string caller = null)
         {
             HttpContextHelper.SetStatusCode(code);
             StatusCode = HttpContextHelper.GetStatusCode(code);
             Error = errorResult;
         }
-
-        /// <summary>
-        /// Return Result success true or false
-        /// </summary>
-        /// <param name="code"></param>
-        public NetResult(ResponseStatusCore code)
+        public NetResult(StatusCore code,[CallerMemberName] string caller = null)
         {
             HttpContextHelper.SetStatusCode(code);
             StatusCode = HttpContextHelper.GetStatusCode(code);
@@ -140,82 +91,90 @@ namespace CoreResults
                     break;
             }
         }
-
-        /// <summary>
-        /// Error is Exist
-        /// </summary>
-        /// <param name="errorResult"></param>
-        public NetResult(ErrorResult errorResult)
+        public NetResult(ErrorResult errorResult, [CallerMemberName] string caller = null)
         {
-            HttpContextHelper.SetStatusCode(ResponseStatusCore.BadRequest);
+            HttpContextHelper.SetStatusCode(StatusCore.BadRequest);
             Error = errorResult;
         }
-
-        public NetResult(Exception ex)
+        public NetResult(Exception ex,[CallerMemberName] string caller = null)
         {
-            HttpContextHelper.SetStatusCode(ResponseStatusCore.Conflict);
+            HttpContextHelper.SetStatusCode(StatusCore.Conflict);
             Error = NewMethod(ex);
         }
+        public NetResult(string message, [CallerMemberName] string caller = null)
+        {
+            HttpContextHelper.SetStatusCode(StatusCore.Success);
+            Error = new ErrorResult { Code = (int)StatusCore.BadRequest, Message = message };
+            Result = ConvertValue<T>(message);
 
-        private static ErrorResult NewMethod(Exception ex)
+        }
+        public NetResult(T model, [CallerMemberName] string caller = null)
+        {
+            Result = model;
+        }
+        public NetResult(int status, bool isError, [CallerMemberName] string caller = null)
+        {
+
+        }
+        public static NetResult<Result> NewResult(string message, [CallerMemberName] string caller = null)
+        {
+
+            return null;
+        }
+        public static NetResult<Result> NewResult(int id, [CallerMemberName] string caller = null)
+        {
+            Result response = new Result() { Code = id };
+            var result = new NetResult<Result>();
+            result.Result = response;
+
+            return result;
+        }
+        private static ErrorResult NewMethod(Exception ex, [CallerMemberName] string caller = null)
         {
             return new ErrorResult(ex);
         }
 
-        public NetResult(string message)
-        {
-            HttpContextHelper.SetStatusCode(ResponseStatusCore.BadRequest);
-            Error = new ErrorResult { Code = (int)ResponseStatusCore.BadRequest, Message = message };
-        }
 
-
+        #region Result
         public static implicit operator NetResult<T>(Exception ext)
         {
-            return null;
+            return new NetResult<T>(ext);
         }
         public static implicit operator NetResult<T>(ErrorResult error)
         {
-            return null;
+            return new NetResult<T>(error);
         }
-
         public static implicit operator NetResult<T>(bool value)
         {
-            return null;
+            return new NetResult<T>(value);
         }
-
         public static implicit operator NetResult<T>(ModelStateDictionary modelState)
         {
-            return null;
+            return new NetResult<T>(modelState);
         }
+        public static implicit operator NetResult<T>(StatusCore code)
+        {
+            return new NetResult<T>(code);
+        }
+        public static implicit operator NetResult<T>(string message) => new NetResult<T>(message);
 
+
+        public static implicit operator NetResult<T>(T model)
+        {
+            return new NetResult<T>(model);
+        }
         
-        public static implicit operator NetResult<T>(ResponseStatusCore code)
+        #endregion
+        private static T ConvertValue<T>(string value)
         {
-            return null;
-        }
 
-        public static implicit operator NetResult<T>(string message)
-        {
-            return null;
+            if (typeof(Result).GUID == typeof(T).GUID)
+            {
+                return (T)Convert.ChangeType(new Result { Message = value }, typeof(T));
+            }
+            return (T)RepositoryState.CreateObject<T>();
+
         }
+       
     }
-
-
-    public static class CoreState
-    {
-        public static NetResult<Result> GetResult(string message)
-        {
-            return NetResult<Result>.NewResult(message);
-        }
-        public static NetResult<Result> GetResult(int message)
-        {
-            return NetResult<Result>.NewResult(message);
-        }
-
-
-
-    }
-
-
-
 }

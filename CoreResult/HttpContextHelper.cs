@@ -22,13 +22,13 @@ namespace CoreResult
         /// 
         /// </summary>
         /// <param name="code"></param>
-        public static void SetStatusCode(ResponseStatusCore code)
+        public static void SetStatusCode(StatusCore code)
         {
             var responseCode = (int)Enum.ToObject(code.GetType(), code);
             SetStatusCode(responseCode);
         }
 
-        public static int GetStatusCode(ResponseStatusCore code)
+        public static int GetStatusCode(StatusCore code)
         {
             return (int)Enum.ToObject(code.GetType(), code);
         }
