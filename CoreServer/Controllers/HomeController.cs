@@ -60,7 +60,7 @@ namespace CoreServer.Controllers
         }
         #region GetAll
         [HttpPost]
-        public MyModel ByTraffic([FromBody]Traffic model)
+        public MyModel ByTraffic([FromBody]MyModel model)
         {
            return _myModel.GetFirst(m=>m.StatusCode==model.StatusCode);
           
