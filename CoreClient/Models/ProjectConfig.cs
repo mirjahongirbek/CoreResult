@@ -1,5 +1,6 @@
 ﻿using LiteDB;
 using RepositoryCore.Interfaces;
+using System.Collections.Generic;
 
 namespace CoreClient.Models
 {
@@ -8,6 +9,6 @@ namespace CoreClient.Models
         [BsonId]
         public string Id { get; set; }
         public string ProjectName { get; set; }
-        public dynamic Config { get; set; }
+        public Dictionary<string,object> Config { get; set; }
     }
 }

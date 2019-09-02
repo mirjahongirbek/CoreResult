@@ -23,7 +23,6 @@ namespace CoreResults
         public NetResult(ModelStateDictionary modelState, [CallerMemberName] string caller = null)
         {
             HttpContextHelper.SetStatusCode(StatusCore.BadRequest);
-
             foreach (var state in modelState)
             {
                 if (state.Value.ValidationState != ModelValidationState.Invalid)
@@ -41,7 +40,7 @@ namespace CoreResults
         {
             HttpContextHelper.SetStatusCode(code);
             StatusCode = HttpContextHelper.GetStatusCode(code);
-
+            //TODO Change
             switch (StatusCode)
             {
                 case 200:
@@ -69,7 +68,7 @@ namespace CoreResults
             StatusCode = HttpContextHelper.GetStatusCode(code);
             Error = errorResult;
         }
-        public NetResult(StatusCore code,[CallerMemberName] string caller = null)
+        public NetResult(StatusCore code, [CallerMemberName] string caller = null)
         {
             HttpContextHelper.SetStatusCode(code);
             StatusCode = HttpContextHelper.GetStatusCode(code);
@@ -96,7 +95,7 @@ namespace CoreResults
             HttpContextHelper.SetStatusCode(StatusCore.BadRequest);
             Error = errorResult;
         }
-        public NetResult(Exception ex,[CallerMemberName] string caller = null)
+        public NetResult(Exception ex, [CallerMemberName] string caller = null)
         {
             HttpContextHelper.SetStatusCode(StatusCore.Conflict);
             Error = NewMethod(ex);
@@ -112,30 +111,40 @@ namespace CoreResults
         {
             Result = model;
         }
+        private void ParseErrorResult(ErrorResult err)
+        {
+            Error = err;
+        }
+        private void ParseResult(Result result)
+        {
+           Result= ConvertResult<T>(result);
+        }
         public NetResult(int status, bool isError, [CallerMemberName] string caller = null)
         {
-
+             var result= CoreState.Rest.GetById(status);
+            if (result.ErrorResult != null)
+            {
+                ParseErrorResult(result.ErrorResult);
+            }else if(result.Result!= null)
+            {
+                ParseResult(result.Result);
+            }
+            HttpContextHelper.SetStatusCode(result.ResponseStatus);
         }
-        public static NetResult<Result> NewResult(string message, [CallerMemberName] string caller = null)
-        {
-
-            return null;
-        }
+        
         public static NetResult<Result> NewResult(int id, [CallerMemberName] string caller = null)
         {
             Result response = new Result() { Code = id };
             var result = new NetResult<Result>();
             result.Result = response;
-
             return result;
         }
         private static ErrorResult NewMethod(Exception ex, [CallerMemberName] string caller = null)
         {
             return new ErrorResult(ex);
         }
-
-
-        #region Result
+  
+         #region Result
         public static implicit operator NetResult<T>(Exception ext)
         {
             return new NetResult<T>(ext);
@@ -156,15 +165,25 @@ namespace CoreResults
         {
             return new NetResult<T>(code);
         }
-        public static implicit operator NetResult<T>(string message) => new NetResult<T>(message);
-
+        public static implicit operator NetResult<T>(string message)
+        {
+            return new NetResult<T>(message);
+        }
 
         public static implicit operator NetResult<T>(T model)
         {
             return new NetResult<T>(model);
         }
-        
+
         #endregion
+        private static T ConvertResult<T>(Result result)
+        {
+            if (typeof(Result).GUID == typeof(T).GUID)
+            {
+                return (T)Convert.ChangeType(result, typeof(T));
+            }
+            return (T)RepositoryState.CreateObject<T>();
+        }
         private static T ConvertValue<T>(string value)
         {
 
@@ -175,6 +194,6 @@ namespace CoreResults
             return (T)RepositoryState.CreateObject<T>();
 
         }
-       
+
     }
 }

@@ -1,7 +1,9 @@
 ﻿using CoreClient.Models;
 using CoreResults;
 using Microsoft.AspNetCore.Mvc;
+using RepositoryCore.Enums;
 using RepositoryCore.Interfaces;
+using RepositoryCore.Models;
 using Service.Entity.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +20,22 @@ namespace CoreServer.Controllers
             _config = config;
         }
         [HttpGet]
-        public ProjectConfig Get(string name)
+        public  NetResult<ProjectConfig> Get(string name)
         {
-           return _config.GetFirst(m => m.ProjectName == name);
+           var result= _config.GetFirst(m => m.ProjectName == name);
+            if(result== null)
+            {
+                result = new ProjectConfig() { ProjectName = name  };
+                _config.Add(result);
+            }
+            return result;
+        }
+        [HttpPut]
+        public NetResult<Result> Update([FromBody]ProjectConfig model)
+        {
+            _config.Update(model);
+            return StatusCore.Success;
+            
         }
         [HttpGet]
         public List<ProjectConfig> GetList()

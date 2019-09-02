@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace CoreClient
 {
-    public class Rest
+    public class Rest 
     {
         RestSharp.RestClient _client;
         private string ProjectName { get; set; }
@@ -42,7 +42,7 @@ namespace CoreClient
             }
             return _instanse;
         }
-        public object GetById(int id)
+        public MyModel GetById(int id)
         {
             RestRequest request = new RestSharp.RestRequest("/home/ByTraffic/",RestSharp.Method.POST);
             MyModel traffic = new MyModel();
@@ -51,7 +51,7 @@ namespace CoreClient
             request.AddJsonBody(traffic);
            var response= Request<MyModel>(request);
             _lite.SaveTraffic(response);
-            return null;
+            return response;
         }
         //TODO Cachange
         public ProjectConfig GetConfig()
@@ -77,6 +77,7 @@ namespace CoreClient
         }
                        
     }
+    
     public class LiteClient
     {
 
