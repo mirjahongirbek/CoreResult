@@ -9,6 +9,6 @@ namespace CoreClient.Models
         [BsonId]
         public string Id { get; set; }
         public string ProjectName { get; set; }
-        public Dictionary<string,object> Config { get; set; }
+        public Dictionary<string,string> Config { get; set; }
     }
 }

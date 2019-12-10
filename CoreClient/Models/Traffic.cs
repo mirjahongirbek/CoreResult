@@ -15,11 +15,11 @@ namespace CoreClient.Models
         public string ProjectName { get; set; }
         [Required]
         public int StatusCode { get; set; }
-        [Required]
+       
         public string Lang { get; set; }
         public StatusCore ResponseStatus { get; set; }
         [Required]
-        ModelStatus ModelStatus { get; set; }
+       public ModelStatus ModelStatus { get; set; }
         public ErrorResult ErrorResult { get; set; }
         public Result Result { get; set; }
         public string FunctionName { get; set; }
@@ -27,5 +27,6 @@ namespace CoreClient.Models
         public int Offset { get; set; }
         [BsonIgnore]
         public int Limit { get; set; }
+        
     }
 }

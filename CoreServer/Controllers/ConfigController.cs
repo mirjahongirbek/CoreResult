@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using RepositoryCore.Enums;
 using RepositoryCore.Interfaces;
 using RepositoryCore.Models;
-using Service.Entity.Models;
+
 using System.Collections.Generic;
 using System.Linq;
 

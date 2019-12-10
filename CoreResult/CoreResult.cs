@@ -40,16 +40,20 @@ namespace CoreResults
         {
             HttpContextHelper.SetStatusCode(code);
             StatusCode = HttpContextHelper.GetStatusCode(code);
+           var result= CoreState.Rest?.GetById((int)code, CoreClient.Models.ModelStatus.ResponseStatus);
             //TODO Change
             switch (StatusCode)
             {
                 case 200:
                 case 201:
                 case 202:
+                    {
+                        
+                    } break;
                 case 484:
                     //TODO Change
                     //Result = new { T= message };
-                    Error = null;
+                    Error = new ErrorResult { Message="sa"};
                     break;
 
                 default:
@@ -119,16 +123,18 @@ namespace CoreResults
         {
            Result= ConvertResult<T>(result);
         }
-        public NetResult(int status, bool isError, [CallerMemberName] string caller = null)
+      
+        public NetResult(int status, [CallerMemberName] string caller = null)
         {
-             var result= CoreState.Rest.GetById(status);
-            if (result.ErrorResult != null)
-            {
-                ParseErrorResult(result.ErrorResult);
-            }else if(result.Result!= null)
+             var result= CoreState.Rest.GetById(status, CoreClient.Models.ModelStatus.IntStatus);
+            if (result.Result != null && !string.IsNullOrEmpty(result.Result.Message))
             {
                 ParseResult(result.Result);
             }
+            else if (result.ErrorResult != null )
+            {
+                ParseErrorResult(result.ErrorResult);
+            } 
             HttpContextHelper.SetStatusCode(result.ResponseStatus);
         }
         
@@ -160,6 +166,10 @@ namespace CoreResults
         public static implicit operator NetResult<T>(ModelStateDictionary modelState)
         {
             return new NetResult<T>(modelState);
+        }
+        public static implicit operator NetResult<T>(int a)
+        {
+            return new NetResult<T>(a);                 
         }
         public static implicit operator NetResult<T>(StatusCore code)
         {
@@ -196,4 +206,5 @@ namespace CoreResults
         }
 
     }
+    
 }

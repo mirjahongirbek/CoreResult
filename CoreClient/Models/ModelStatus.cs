@@ -7,5 +7,6 @@
         ResponseStatus,
         DefaultStatus,
         FunctionName,
+        IntStatus
     }
 }

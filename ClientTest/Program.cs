@@ -1,4 +1,6 @@
 ﻿using CoreClient;
+using CoreResults;
+using RepositoryCore.Models;
 using System;
 
 namespace ClientTest
@@ -8,9 +10,15 @@ namespace ClientTest
         static void Main(string[] args)
         {
             Rest client = Rest.Instanse("", "ddd");
-         var response=   client.GetById(11);
+            CoreState.Rest = client;
+           var ddd= sRest();
+            
             Console.WriteLine("Hello World!");
             Console.ReadLine();
+        }
+       static NetResult<Result> sRest()
+        {
+            return 11;
         }
     }
 }

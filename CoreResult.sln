@@ -1,23 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreResult", "CoreResult\CoreResult.csproj", "{EA5E1679-5A36-4C54-9E83-0D0A7469B541}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RepositoryCore", "..\RepositoryCore\RepositoryCore\RepositoryCore.csproj", "{22DAE9A6-5A46-4977-997C-800A9FB91461}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreClient", "CoreClient\CoreClient.csproj", "{A50DA01B-D63A-4948-A391-D415C738099C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreClient", "CoreClient\CoreClient.csproj", "{A50DA01B-D63A-4948-A391-D415C738099C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CoreServers", "CoreServers", "{CF71BDFA-F82A-494A-82D9-A0B6BFE4E81D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreServer", "CoreServer\CoreServer.csproj", "{0E0A2C18-EF20-465B-B422-4A1137C6E32F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreServer", "CoreServer\CoreServer.csproj", "{0E0A2C18-EF20-465B-B422-4A1137C6E32F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "Service\Service.csproj", "{22E9FE94-D8DF-4658-9DDD-C65EAA1B96BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service", "Service\Service.csproj", "{22E9FE94-D8DF-4658-9DDD-C65EAA1B96BB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteRepository", "..\EntityRepository\LiteRepository\LiteRepository.csproj", "{69F0FFE1-F502-41AD-95FB-2FEEED65C11C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientTest", "ClientTest\ClientTest.csproj", "{91308373-0946-46B5-B02B-1066FB6EF529}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientTest", "ClientTest\ClientTest.csproj", "{91308373-0946-46B5-B02B-1066FB6EF529}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MyLibs", "MyLibs", "{00E181C6-158B-48ED-97FF-BBD783979E63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -58,6 +60,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{22DAE9A6-5A46-4977-997C-800A9FB91461} = {00E181C6-158B-48ED-97FF-BBD783979E63}
 		{0E0A2C18-EF20-465B-B422-4A1137C6E32F} = {CF71BDFA-F82A-494A-82D9-A0B6BFE4E81D}
 		{22E9FE94-D8DF-4658-9DDD-C65EAA1B96BB} = {CF71BDFA-F82A-494A-82D9-A0B6BFE4E81D}
 		{91308373-0946-46B5-B02B-1066FB6EF529} = {CF71BDFA-F82A-494A-82D9-A0B6BFE4E81D}
