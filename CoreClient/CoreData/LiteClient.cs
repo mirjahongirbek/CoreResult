@@ -9,6 +9,8 @@ namespace CoreClient
     {
 
         public LiteDB.LiteDatabase Database { get; set; }
+        private LiteCollection<MyModel> _models;
+        private LiteCollection<ProjectConfig> _configs;
         public LiteClient(string databaseName="test.db")
         {
             if (!databaseName.Contains(".db"))
@@ -16,16 +18,16 @@ namespace CoreClient
                 databaseName = databaseName + ".db";
             }
             Database = new LiteDB.LiteDatabase(databaseName);
+            _models = Database.GetCollection<MyModel>();
+            _configs = Database.GetCollection<ProjectConfig>();
         }
         public  void SaveData<T>(T model)
-
         {
-
             Database.GetCollection<T>().Insert(model);
         }
         public void SaveTraffic(MyModel model)
         {
-           var traffic= Database.GetCollection<MyModel>().FindOne(m => m.StatusCode == model.StatusCode);
+           var traffic= _models.FindOne(m => m.StatusCode == model.StatusCode);
             if(traffic== null)
             {
                if(string.IsNullOrEmpty(model.Id))
@@ -42,19 +44,19 @@ namespace CoreClient
         }
         public void SaveConfig(ProjectConfig config)
         {
-         var _collection=   Database.GetCollection<ProjectConfig>();
-           var list= _collection.FindAll().ToList();
+         //var _collection=   /Database.GetCollection<ProjectConfig>();
+           var list= _configs.FindAll().ToList();
             if (list.Count == 0)
             {
                 if (string.IsNullOrEmpty(config.Id))
                 {
                     config.Id = ObjectId.NewObjectId().ToString();
                 }
-                _collection.Insert(config);
+                _configs.Insert(config);
             }
            var conf= list[0];
             config.Id = conf.Id;
-            _collection.Update(config);
+            _configs.Update(config);
         }
         public ProjectConfig GetConfig()
         {
@@ -64,6 +66,10 @@ namespace CoreClient
                return confs[0];
             }
             return null;
+        }
+        public MyModel GetById(int id, ModelStatus modelStatus)
+        {
+           return _models.FindOne(m => m.StatusCode == id);
         }
                 
     }

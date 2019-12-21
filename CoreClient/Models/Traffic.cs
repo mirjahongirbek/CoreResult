@@ -13,6 +13,7 @@ namespace CoreClient.Models
         public string Id { get; set; }
         [Required]
         public string ProjectName { get; set; }
+        public string ProjectId { get; set; }
         [Required]
         public int StatusCode { get; set; }
        

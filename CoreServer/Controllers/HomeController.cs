@@ -56,6 +56,7 @@ namespace CoreServer.Controllers
         [HttpGet]
         public List<MyModel> GetAll(string projectName)
         {
+            
             return _myModel.Find(m => m.ProjectName == projectName).ToList();
         }
         #region GetAll
@@ -70,6 +71,7 @@ namespace CoreServer.Controllers
         {
             return    _project.FindAll().ToList();
         }
+      
         #endregion
         #region
         [HttpPost]

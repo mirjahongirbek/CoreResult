@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\EntityRepository\LiteRepository\LiteRepository.csproj" />
     <ProjectReference Include="..\..\RepositoryCore\RepositoryCore\RepositoryCore.csproj" />
   </ItemGroup>
 

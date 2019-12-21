@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CoreClient.Models;
+using Microsoft.AspNetCore.Mvc;
 using RepositoryCore.Models;
 using RepositoryCore.Result;
 using System;
@@ -7,39 +8,57 @@ namespace CoreResults
 {
     public static class StateResult
     {
+
         public static ResponseData GetResponse( this ControllerBase cBase, object result)
         {
             switch (result)
             {
-                case ErrorResult ext: { 
-
-                    } break;
-                case Exception ext: { }break;
-                case ResponseData response: { } break;
-                case Result rslt: { } break;
+                case Exception ext:
+                    return ErrorResponse(cBase, result);                    
+                case ResponseData response: return response;
+                case Result rslt: break;
+                default: {
+                        return new ResponseData() { result = result };
+                    } 
             }
+            return null;
+        }        
+        public static ResponseData GetResponse(this ControllerBase cBase,object result= null, object error= null)
+        {
+            if(result!= null)
+            {
+                return  GetResponse(cBase, result);
+            }
+            if(error!= null)
+            {
+                return ErrorResponse(cBase, error);
+            }
+            return null;
         }
-        
+       public static ResponseData GetResponse(this ControllerBase cBase, int code)
+        {
+           var result= CoreClient.RestState.Client.GetById(code, CoreClient.Models.ModelStatus.IntStatus);
+           return GetResult(cBase, result);
+        }
+        #region Get Response
+
         public static ResponseData GetResponse(this ControllerBase cBase, object result, int code)
         {
-            
+            return null;
         }
-        public static ResponseData GetResponse(this ControllerBase cBase, object result, int code, object error)
+        public static ResponseData GetResult(this ControllerBase cBase, MyModel model)
         {
-
-
+            // TODO methos 
+            return null;
         }
-        public static ResponseData GetResponse(this ControllerBase cBase,object result, object error)
+        public static ResponseData ErrorResponse(this ControllerBase cBase, object error)
         {
-
+            return null;
         }
-        public static ResponseData GetResponse(this ControllerBase cBase, int code)
-        {
-
-        }
+        #endregion
     }
-    
-    
+
+
 
 
 

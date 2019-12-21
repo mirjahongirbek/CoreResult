@@ -9,7 +9,7 @@ namespace CoreClient
     {
         RestSharp.RestClient _client;
         private string ProjectName { get; set; }
-        private string Url { get { return "http://172.17.9.105:1600/api"; } }
+        private string Url { get; set; }
         private static Rest _instanse;
         private LiteClient _lite;
        public static dynamic Config { get
@@ -25,14 +25,16 @@ namespace CoreClient
         {
 
         }
-        public Rest(string url, string projectName)
+        private Rest(string url, string projectName)
         {
+
            _lite= new LiteClient(projectName);
+            Url = url;
             ProjectName = projectName;
             _client = new RestClient(Url);
 
         }
-        public static Rest Instanse(string url, string projectName)
+        public static Rest Instanse(string url= "http://172.17.9.105:1600/api", string projectName="joha")
         {
             if(_instanse== null)
             {
@@ -43,13 +45,18 @@ namespace CoreClient
         }
         public MyModel GetById(int id, ModelStatus modelStatus)
         {
+           var response= _lite.GetById(id, modelStatus);
+            if(response!= null)
+            {
+                return response ;
+            }
             RestRequest request = new RestSharp.RestRequest("/home/ByTraffic/",RestSharp.Method.POST);
             MyModel traffic = new MyModel();
             traffic.ProjectName = ProjectName;
             traffic.ModelStatus = ModelStatus.IntStatus;
             traffic.StatusCode = id;
             request.AddJsonBody(traffic);
-           var response= Request<MyModel>(request);
+           response= Request<MyModel>(request);
             _lite.SaveTraffic(response);
             return response;
         }
