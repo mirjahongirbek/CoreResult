@@ -112,7 +112,6 @@ namespace CoreResults
             {
                 ById(e.Id);
             }
-
         }
         public NetResult(Exception ex, [CallerMemberName] string caller = null)
         {

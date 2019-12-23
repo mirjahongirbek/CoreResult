@@ -1,9 +1,7 @@
 ﻿using CoreClient;
-using CoreResult;
 using CoreResults;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +22,7 @@ namespace CoreTest
         {
             Rest client = Rest.Instanse();
             CoreState.Rest = client;
-            services.AddHttpContextAccessor();
+            CoreState.AddContext(services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -35,8 +33,7 @@ namespace CoreTest
             {
                 app.UseDeveloperExceptionPage();
             }
-            if (app.ApplicationServices.GetService<IHttpContextAccessor>() != null)
-                HttpContextHelper.Accessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
+            CoreState.ContextMiddleware(app);
             app.UseMvc();
         }
     }
