@@ -1,7 +1,9 @@
 ﻿using CoreResult;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using RepositoryCore.CoreState;
 using RepositoryCore.Enums;
+using RepositoryCore.Exceptions;
 using RepositoryCore.Models;
 using RepositoryCore.Result;
 using System;
@@ -40,7 +42,7 @@ namespace CoreResults
         {
             HttpContextHelper.SetStatusCode(code);
             StatusCode = HttpContextHelper.GetStatusCode(code);
-           var result= CoreState.Rest?.GetById((int)code, CoreClient.Models.ModelStatus.ResponseStatus);
+            var result = CoreState.Rest?.GetById((int)code, CoreClient.Models.ModelStatus.ResponseStatus);
             //TODO Change
             switch (StatusCode)
             {
@@ -48,12 +50,13 @@ namespace CoreResults
                 case 201:
                 case 202:
                     {
-                        
-                    } break;
+
+                    }
+                    break;
                 case 484:
                     //TODO Change
                     //Result = new { T= message };
-                    Error = new ErrorResult { Message="sa"};
+                    Error = new ErrorResult { Message = "sa" };
                     break;
 
                 default:
@@ -99,6 +102,18 @@ namespace CoreResults
             HttpContextHelper.SetStatusCode(StatusCore.BadRequest);
             Error = errorResult;
         }
+        public NetResult(CoreException e)
+        {
+            if (e == null)
+            {
+
+            }
+            if (e.Id != 0)
+            {
+                ById(e.Id);
+            }
+
+        }
         public NetResult(Exception ex, [CallerMemberName] string caller = null)
         {
             HttpContextHelper.SetStatusCode(StatusCore.Conflict);
@@ -115,33 +130,38 @@ namespace CoreResults
         {
             Result = model;
         }
+
         private void ParseErrorResult(ErrorResult err)
         {
             Error = err;
         }
-        private void ParseResult(Result result)
+        private void ParseResult(ResponseData result)
         {
-           Result= ConvertResult<T>(result);
+            Result = ConvertResult<T>(result);
         }
-      
+
         public NetResult(int status, [CallerMemberName] string caller = null)
         {
-             var result= CoreState.Rest.GetById(status, CoreClient.Models.ModelStatus.IntStatus);
+            ById(status);
+        }
+        private void ById(int status)
+        {
+            var result = CoreState.Rest.GetById(status, CoreClient.Models.ModelStatus.IntStatus);
             if (result.Result != null && !string.IsNullOrEmpty(result.Result.Message))
             {
                 ParseResult(result.Result);
             }
-            else if (result.ErrorResult != null )
+            else if (result.ErrorResult != null)
             {
                 ParseErrorResult(result.ErrorResult);
-            } 
-            HttpContextHelper.SetStatusCode(result.ResponseStatus);
+            }
+            HttpContextHelper.Accessor.HttpContext.Response.StatusCode = (int)result.ResponseStatus;
         }
-        
-        public static NetResult<Result> NewResult(int id, [CallerMemberName] string caller = null)
+
+        public static NetResult<ResponseData> NewResult(int id, [CallerMemberName] string caller = null)
         {
-            Result response = new Result() { Code = id };
-            var result = new NetResult<Result>();
+            ResponseData response = new ResponseData() { Code = id };
+            var result = new NetResult<ResponseData>();
             result.Result = response;
             return result;
         }
@@ -149,11 +169,15 @@ namespace CoreResults
         {
             return new ErrorResult(ex);
         }
-  
-         #region Result
-        public static implicit operator NetResult<T>(Exception ext)
+
+        #region Result
+        public static implicit operator NetResult<T>(CoreException e)
         {
-            return new NetResult<T>(ext);
+            return new NetResult<T>(e);
+        }
+        public static implicit operator NetResult<T>(Exception e)
+        {
+            return new NetResult<T>(e);
         }
         public static implicit operator NetResult<T>(ErrorResult error)
         {
@@ -163,13 +187,14 @@ namespace CoreResults
         {
             return new NetResult<T>(value);
         }
+
         public static implicit operator NetResult<T>(ModelStateDictionary modelState)
         {
             return new NetResult<T>(modelState);
         }
         public static implicit operator NetResult<T>(int a)
         {
-            return new NetResult<T>(a);                 
+            return new NetResult<T>(a);
         }
         public static implicit operator NetResult<T>(StatusCore code)
         {
@@ -184,27 +209,30 @@ namespace CoreResults
         {
             return new NetResult<T>(model);
         }
-
         #endregion
-        private static T ConvertResult<T>(Result result)
+
+
+        private static T ConvertResult<T>(ResponseData result)
         {
-            if (typeof(Result).GUID == typeof(T).GUID)
+
+            if (typeof(ResponseData).GUID == typeof(T).GUID)
             {
                 return (T)Convert.ChangeType(result, typeof(T));
             }
             return (T)RepositoryState.CreateObject<T>();
         }
+
         private static T ConvertValue<T>(string value)
         {
 
-            if (typeof(Result).GUID == typeof(T).GUID)
+            if (typeof(ResponseData).GUID == typeof(T).GUID)
             {
-                return (T)Convert.ChangeType(new Result { Message = value }, typeof(T));
+                return (T)Convert.ChangeType(new ResponseData { Message = value }, typeof(T));
             }
             return (T)RepositoryState.CreateObject<T>();
 
         }
 
     }
-    
+
 }

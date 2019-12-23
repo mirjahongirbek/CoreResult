@@ -18,7 +18,7 @@ namespace CoreTest
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
+            WebHost.CreateDefaultBuilder(args).UseUrls("http://*:1601")
                 .UseStartup<Startup>();
     }
 }

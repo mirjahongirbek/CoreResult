@@ -22,7 +22,7 @@ namespace CoreClient.Models
         [Required]
        public ModelStatus ModelStatus { get; set; }
         public ErrorResult ErrorResult { get; set; }
-        public Result Result { get; set; }
+        public ResponseData Result { get; set; }
         public string FunctionName { get; set; }
         [BsonIgnore]
         public int Offset { get; set; }

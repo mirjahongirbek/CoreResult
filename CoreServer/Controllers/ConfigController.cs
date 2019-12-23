@@ -31,7 +31,7 @@ namespace CoreServer.Controllers
             return result;
         }
         [HttpPut]
-        public NetResult<Result> Update([FromBody]ProjectConfig model)
+        public NetResult<ResponseData> Update([FromBody]ProjectConfig model)
         {
             _config.Update(model);
             return StatusCore.Success;

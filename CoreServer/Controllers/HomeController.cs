@@ -18,14 +18,13 @@ namespace CoreServer.Controllers
     public class HomeController : ControllerBase
     {
         IRepositoryCore<MyModel, string> _myModel;
-        IRepositoryCore<Project, string> _project;
-        public HomeController(
+       public HomeController(
             IRepositoryCore<MyModel, string> myModel,
             IRepositoryCore<Project, string> project
             )
         {
             _myModel = myModel;
-            _project = project;
+           
         }
         
         #region 
@@ -40,25 +39,25 @@ namespace CoreServer.Controllers
             return model;
         }
         [HttpPut]
-        public NetResult<Result> Update([FromBody] MyModel model)
+        public NetResult<ResponseData> Update([FromBody] MyModel model)
         {
             _myModel.Update(model);
             return StatusCore.Success;
         }
         [HttpDelete]
-        public NetResult<Result> Delete(string id)
+        public NetResult<ResponseData> Delete(string id)
         {
             _myModel.Delete(id);
             return StatusCore.Success;
         }
         #endregion
-
         [HttpGet]
         public List<MyModel> GetAll(string projectName)
         {
-            
+
             return _myModel.Find(m => m.ProjectName == projectName).ToList();
         }
+
         #region GetAll
         [HttpPost]
         public MyModel ByTraffic([FromBody]MyModel model)
@@ -66,20 +65,12 @@ namespace CoreServer.Controllers
            return _myModel.GetFirst(m=>m.StatusCode==model.StatusCode);
           
         }
-        [HttpGet]
-        public List<Project> GetallProject()
-        {
-            return    _project.FindAll().ToList();
-        }
+       
       
         #endregion
+
         #region
-        [HttpPost]
-        public NetResult<Project> AddProject([FromBody] Project model)
-        {
-            _project.Add(model);
-            return model;
-        }
+       
         [HttpGet]
         public NetResult<List<string>> GetCulters()
         {
@@ -116,7 +107,7 @@ namespace CoreServer.Controllers
                             
         }
         [HttpPut]
-        public NetResult<Result> UpdateModel([FromBody]MyModel model)
+        public NetResult<ResponseData> UpdateModel([FromBody]MyModel model)
         {
             _myModel.Update(model);
         return StatusCore.Success;

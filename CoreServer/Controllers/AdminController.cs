@@ -3,11 +3,11 @@ using CoreClient.Models;
 using CoreResults;
 using CoreServer.Models;
 using Microsoft.AspNetCore.Mvc;
-
 using RepositoryCore.Interfaces;
-using RepositoryCore.Result;
+using RepositoryCore.Models;
 using Service.Entity.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CoreServer.Controllers
@@ -36,7 +36,16 @@ namespace CoreServer.Controllers
                 {
 
                 }
-                var item= this.GetResponse(_myModel.FindReverse(m => m.ProjectName == project.ProjectName && m.Lang.ToLower()== model.Lang.ToLower()).Skip(model.Offset).Take(model.Limit));
+                List<MyModel> result = null;
+                if (string.IsNullOrEmpty(model.Lang))
+                {
+                   result= _myModel.FindReverse(m => m.ProjectName == project.ProjectName).Skip(model.Offset).Take(model.Limit).ToList();
+                }
+                else
+                {
+                    result= _myModel.FindReverse(m => m.ProjectName == project.ProjectName&& m.Lang== model.Lang).Skip(model.Offset).Take(model.Limit).ToList();
+                }               
+                var item= this.GetResponse(result);
                 return item;
 
             }catch(Exception ext)

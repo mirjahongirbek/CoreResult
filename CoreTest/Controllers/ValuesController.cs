@@ -1,30 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using CoreResults;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RepositoryCore.Models;
 
 namespace CoreTest.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Route("api/[controller]/[action]")]
+  
     public class ValuesController : ControllerBase
     {
+        private static IHttpContextAccessor _httpContextAccessor;
+        public ValuesController(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+        public static HttpContext Current => _httpContextAccessor.HttpContext;
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public NetResult<ResponseData> Get()
         {
-            return new string[] { "value1", "value2" };
+            return 16;
+           
+            //return new string[] { "value1", "value2" };
         }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
+      
+       // POST api/values
         [HttpPost]
         public void Post([FromBody] string value)
         {

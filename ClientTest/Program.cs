@@ -16,7 +16,7 @@ namespace ClientTest
             Console.WriteLine("Hello World!");
             Console.ReadLine();
         }
-       static NetResult<Result> sRest()
+       static NetResult<ResponseData> sRest()
         {
             return 11;
         }

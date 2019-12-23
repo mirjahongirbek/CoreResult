@@ -9,16 +9,16 @@ namespace CoreResults
     public static class StateResult
     {
 
-        public static ResponseData GetResponse( this ControllerBase cBase, object result)
+        public static ResponseData GetResponse(this ControllerBase cBase, object result)
         {
             switch (result)
             {
                 case Exception ext:
                     return ErrorResponse(cBase, result);                    
                 case ResponseData response: return response;
-                case Result rslt: break;
+               /* case ResponseData rslt: break;*/
                 default: {
-                        return new ResponseData() { result = result };
+                        return new ResponseData() { Result = result };
                     } 
             }
             return null;
@@ -35,11 +35,14 @@ namespace CoreResults
             }
             return null;
         }
-       public static ResponseData GetResponse(this ControllerBase cBase, int code)
+        public static ResponseData GetResponse(this ControllerBase cBase, int code)
         {
            var result= CoreClient.RestState.Client.GetById(code, CoreClient.Models.ModelStatus.IntStatus);
            return GetResult(cBase, result);
         }
+        
+        
+
         #region Get Response
 
         public static ResponseData GetResponse(this ControllerBase cBase, object result, int code)
@@ -56,9 +59,12 @@ namespace CoreResults
             return null;
         }
         #endregion
+
+
+
     }
 
-
+    
 
 
 
