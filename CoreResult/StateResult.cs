@@ -1,7 +1,6 @@
 ﻿using CoreClient.Models;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryCore.Models;
-using RepositoryCore.Result;
 using System;
 
 namespace CoreResults
@@ -14,22 +13,41 @@ namespace CoreResults
             switch (result)
             {
                 case Exception ext:
-                    return ErrorResponse(cBase, result);                    
-                case ResponseData response: return response;
-               /* case ResponseData rslt: break;*/
-                default: {
+                    return ErrorResponse(cBase, result);
+                case ResponseData response: return GetResponse(cBase, response);
+
+                /* case ResponseData rslt: break;*/
+                default:
+                    {
                         return new ResponseData() { Result = result };
-                    } 
+                    }
             }
             return null;
-        }        
-        public static ResponseData GetResponse(this ControllerBase cBase,object result= null, object error= null)
+        }
+        public static ResponseData DefaultResponse()
         {
-            if(result!= null)
+           return  new ResponseData()
             {
-                return  GetResponse(cBase, result);
+               Result= new { noContent= true}
+            };
+        }
+        public static ResponseData GetResponse(this ControllerBase cBase, ResponseData result)
+        {
+            if (result == null)
+            {
+                return DefaultResponse();
             }
-            if(error!= null)
+            cBase.Response.StatusCode = (int)result.StatusCore;
+
+            return result;
+        }
+        public static ResponseData GetResponse(this ControllerBase cBase, object result = null, object error = null)
+        {
+            if (result != null)
+            {
+                return GetResponse(cBase, result);
+            }
+            if (error != null)
             {
                 return ErrorResponse(cBase, error);
             }
@@ -37,26 +55,34 @@ namespace CoreResults
         }
         public static ResponseData GetResponse(this ControllerBase cBase, int code)
         {
-           var result= CoreClient.RestState.Client.GetById(code, CoreClient.Models.ModelStatus.IntStatus);
-           return GetResult(cBase, result);
+            var model = CoreState.ById(code);
+            return GetResult(cBase, model);
         }
-        
-        
+
+
 
         #region Get Response
-
+        
         public static ResponseData GetResponse(this ControllerBase cBase, object result, int code)
         {
             return null;
         }
         public static ResponseData GetResult(this ControllerBase cBase, MyModel model)
         {
+            cBase.Response.StatusCode = (int)model.StatusCode;
+            
             // TODO methos 
             return null;
         }
         public static ResponseData ErrorResponse(this ControllerBase cBase, object error)
         {
-            return null;
+            cBase.Response.StatusCode = 400;
+            ResponseData result = new ResponseData()
+            {
+                Error = error
+            };
+            return result;
+            
         }
         #endregion
 
@@ -64,7 +90,7 @@ namespace CoreResults
 
     }
 
-    
+
 
 
 

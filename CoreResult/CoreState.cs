@@ -1,4 +1,5 @@
 ﻿using CoreClient;
+using CoreClient.Models;
 using CoreResult;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -26,9 +27,22 @@ namespace CoreResults
             return filename;
 
         }
-        public static void AddContext(IServiceCollection services)
+        public static void AddContextAccessor(IServiceCollection services,
+            string url="",
+            string projectName="", 
+            string login="" ,
+            string password="")
         {
             services.AddHttpContextAccessor();
+            if(!string.IsNullOrEmpty(url))
+            Rest.Instanse(url, projectName, login, password);
+        }
+        public static MyModel ById(int id)
+        {
+            var result = Rest.GetById(id, CoreClient.Models.ModelStatus.IntStatus);
+            return result;
+
+
         }
         public static void ContextMiddleware(IApplicationBuilder app)
         {

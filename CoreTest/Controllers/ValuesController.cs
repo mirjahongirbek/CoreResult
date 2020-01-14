@@ -1,4 +1,5 @@
-﻿using CoreResults;
+﻿using CoreClient.Interface;
+using CoreResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryCore.Models;
@@ -10,15 +11,19 @@ namespace CoreTest.Controllers
     public class ValuesController : ControllerBase
     {
         private static IHttpContextAccessor _httpContextAccessor;
-        public ValuesController(IHttpContextAccessor httpContextAccessor)
+        private ICoreConfig _config;
+        public ValuesController(IHttpContextAccessor httpContextAccessor,
+            ICoreConfig config)
         {
             _httpContextAccessor = httpContextAccessor;
+            _config = config;
         }
         public static HttpContext Current => _httpContextAccessor.HttpContext;
         // GET api/values
         [HttpGet]
         public NetResult<ResponseData> Get()
         {
+           var Key= _config.ToString("joha");
             return 16;
            
             //return new string[] { "value1", "value2" };

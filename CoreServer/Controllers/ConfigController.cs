@@ -19,6 +19,7 @@ namespace CoreServer.Controllers
         {
             _config = config;
         }
+
         [HttpGet]
         public  NetResult<ProjectConfig> Get(string name)
         {

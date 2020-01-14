@@ -1,5 +1,4 @@
 ﻿using CoreResult;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using RepositoryCore.CoreState;
 using RepositoryCore.Enums;
@@ -145,7 +144,8 @@ namespace CoreResults
         }
         private void ById(int status)
         {
-            var result = CoreState.Rest.GetById(status, CoreClient.Models.ModelStatus.IntStatus);
+           var result= CoreState.ById(status);
+            //var result = CoreState.Rest.GetById(status, CoreClient.Models.ModelStatus.IntStatus);
             if (result.Result != null && !string.IsNullOrEmpty(result.Result.Message))
             {
                 ParseResult(result.Result);

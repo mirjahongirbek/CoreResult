@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace CoreClient
 {
-    internal class LiteClient
+    public class LiteClient
     {
 
         public LiteDB.LiteDatabase Database { get; set; }
@@ -58,6 +58,15 @@ namespace CoreClient
             config.Id = conf.Id;
             _configs.Update(config);
         }
+        public ProjectConfig GetConfigById(string id)
+        {
+            var confs = Database.GetCollection<ProjectConfig>().FindById(id);
+            return confs;
+        }
+        public void UpdateConfig(ProjectConfig conf)
+        {
+            Database.GetCollection<ProjectConfig>().Update(conf);
+        }
         public ProjectConfig GetConfig()
         {
             var confs = Database.GetCollection<ProjectConfig>().FindAll().ToArray();
@@ -71,6 +80,7 @@ namespace CoreClient
         {
            return _models.FindOne(m => m.StatusCode == id);
         }
+        
                 
     }
 }

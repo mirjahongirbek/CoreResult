@@ -9,9 +9,8 @@ namespace ClientTest
     {
         static void Main(string[] args)
         {
-            Rest client = Rest.Instanse("", "ddd");
-            CoreState.Rest = client;
-           var ddd= sRest();
+           
+           
             
             Console.WriteLine("Hello World!");
             Console.ReadLine();

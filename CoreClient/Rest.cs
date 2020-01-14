@@ -1,7 +1,12 @@
-﻿
+﻿using CoreClient.Interface;
 using CoreClient.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RepositoryCore.Models;
 using RestSharp;
+using RestSharp.Authenticators;
+using System;
 
 namespace CoreClient
 {
@@ -25,22 +30,42 @@ namespace CoreClient
         {
 
         }
-        private Rest(string url, string projectName)
+        private Rest(string url, string projectName, IServiceCollection services = null)
         {
 
            _lite= new LiteClient(projectName);
             Url = url;
             ProjectName = projectName;
             _client = new RestClient(Url);
+            services.AddSingleton(_lite);
 
         }
-        public static Rest Instanse(string url= "http://172.17.9.105:1600/api", string projectName="joha")
+
+        public static Rest Instanse(string url, string projectName, string login="", string password = "")
         {
-            if(_instanse== null)
+            if (_instanse == null)
             {
                 _instanse = new Rest(url, projectName);
             }
+            if(!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password))
+            {
+                _instanse._client.Authenticator = new HttpBasicAuthenticator(login, password);
+            }
             RestState.Client = _instanse;
+            return _instanse;
+
+        }
+        public static Rest Instanse(string url= "http://172.17.9.105:1600/api", string projectName="joha",
+             IServiceCollection services= null)
+        {
+            if(_instanse== null)
+            {
+                _instanse = new Rest(url, projectName, services);
+            }
+            RestState.Client = _instanse;
+            RestState.ProjectName = projectName;
+            RestState.Url = url;
+            services.AddSingleton<ICoreConfig, ClientConfig>();
             return _instanse;
         }
         public MyModel GetById(int id, ModelStatus modelStatus)
@@ -74,18 +99,28 @@ namespace CoreClient
            var response= _client.Execute(request);
             if (response.IsSuccessful)
             {
-                return  JsonConvert.DeserializeObject<T>(response.Content);
+                
+                var result=  JsonConvert.DeserializeObject<ResponseData>(response.Content);
+                return ((JObject)result.Result).ToObject<T>();
             }
             return null;
         }
+        public T RequestMe<T>(RestRequest request)
+        {
+            var response = _client.Execute(request);
+            if (response.IsSuccessful)
+            {
+                return JsonConvert.DeserializeObject<T>(response.Content);
+            }
+           var tip= typeof(T);
+           var result= (T)Activator.CreateInstance(tip);
+            return result;
+        }
+
         public bool LifeTime
         {
             get { return false; }
         }
                        
-    }
-    public class RestState
-    {
-        public static Rest Client { get; set; }
     }
 }

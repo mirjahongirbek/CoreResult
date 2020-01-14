@@ -10,6 +10,7 @@ namespace CoreClient.Models
         public string Id { get; set; }
         public string ProjectName { get; set; }
         public Dictionary<string,string> Config { get; set; }
+
         
     }
 }
