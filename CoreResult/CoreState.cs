@@ -35,7 +35,7 @@ namespace CoreResults
         {
             services.AddHttpContextAccessor();
             if(!string.IsNullOrEmpty(url))
-            Rest.Instanse(url, projectName, login, password);
+            Rest.Instanse(url, projectName,services, login, password);
         }
         public static MyModel ById(int id)
         {

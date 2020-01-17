@@ -20,7 +20,7 @@ namespace CoreTest
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            Rest client = Rest.Instanse(services:services);
+            Rest client = Rest.Instanse(services);
             CoreState.Rest = client;
             CoreState.AddContextAccessor(services, "http://172.17.8.248:1600", "joha");
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
