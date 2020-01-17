@@ -65,6 +65,8 @@ namespace CoreClient
         }
         public void UpdateConfig(ProjectConfig conf)
         {
+
+            if (conf == null) return;
             Database.GetCollection<ProjectConfig>().Update(conf);
         }
         public ProjectConfig GetConfig()

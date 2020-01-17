@@ -17,6 +17,7 @@ namespace CoreClient
         private string Url { get; set; }
         private static Rest _instanse;
         private LiteClient _lite;
+        public ClientConfig _config;
        public static dynamic Config { get
             {
                 if(_instanse== null)
@@ -30,41 +31,48 @@ namespace CoreClient
         {
 
         }
-        private Rest(string url, string projectName, IServiceCollection services = null)
+        private Rest(string url, string projectName, IServiceCollection services)
         {
 
            _lite= new LiteClient(projectName);
             Url = url;
             ProjectName = projectName;
             _client = new RestClient(Url);
+            RestState.Client = this;
+            ICoreConfig config = new ClientConfig(_lite );
             services.AddSingleton(_lite);
+            services.AddSingleton(config);
 
         }
 
-        public static Rest Instanse(string url, string projectName, string login="", string password = "")
+        public static Rest Instanse(string url, string projectName, IServiceCollection services,  string login="", string password = "")
         {
+            
             if (_instanse == null)
             {
-                _instanse = new Rest(url, projectName);
+                RestState.ProjectName = projectName;
+                RestState.Url = url;
+                _instanse = new Rest(url, projectName, services);
             }
             if(!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password))
             {
                 _instanse._client.Authenticator = new HttpBasicAuthenticator(login, password);
             }
-            RestState.Client = _instanse;
+           
             return _instanse;
 
         }
-        public static Rest Instanse(string url= "http://172.17.9.105:1600/api", string projectName="joha",
-             IServiceCollection services= null)
+        public static Rest Instanse(IServiceCollection services, string url= "http://172.17.9.105:1600/api", string projectName="joha"
+            )
         {
-            if(_instanse== null)
+
+            RestState.ProjectName = projectName;
+            RestState.Url = url;
+            if (_instanse== null)
             {
                 _instanse = new Rest(url, projectName, services);
             }
-            RestState.Client = _instanse;
-            RestState.ProjectName = projectName;
-            RestState.Url = url;
+     
             services.AddSingleton<ICoreConfig, ClientConfig>();
             return _instanse;
         }

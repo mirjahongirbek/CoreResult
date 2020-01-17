@@ -1,7 +1,8 @@
 ﻿using CoreClient.Interface;
 using CoreClient.Models;
-using RestSharp;
+using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CoreClient
 {
@@ -10,6 +11,7 @@ namespace CoreClient
         LiteClient _client;
         public ClientConfig(LiteClient client) {
             _client = client;
+            GetConfig();
         }
         public  string ToString(string key)
         {
@@ -22,12 +24,25 @@ namespace CoreClient
             return real.Value;
         }
         
-        public ProjectConfig GetConfig()
+        public ProjectConfig GetServer()
         {
            var request = new RestSharp.RestRequest("/config/get?name=" + RestState.ProjectName);
-           var getMe= RestState.Client.Request<ProjectConfig>(request);
+               var getMe= RestState.Client.Request<ProjectConfig>(request);
             _client.UpdateConfig(getMe);
+            RestState.ProjectConfig = getMe;
             return getMe;    
+        }
+        public ProjectConfig GetConfig()
+        {
+            if(RestState.ProjectConfig== null)
+            {
+                return GetServer();
+            }
+            if (RestState.ConfDateTime.AddMinutes(5) < DateTime.Now)
+            {
+                Task.Factory.StartNew(()=>GetServer());
+            }
+            return RestState.ProjectConfig;
         }
         
     }
