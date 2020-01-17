@@ -17,6 +17,7 @@ $ dotnet run
 ```
 # Code Example
 ### First Set in Startup.cs
+```sh
  public void ConfigureServices(IServiceCollection services)
         {
             //TODO change
@@ -34,7 +35,10 @@ $ dotnet run
             CoreState.ContextMiddleware(app);
             app.UseMvc();
         }
+ ```
 ### Secon In Controller
+
+```sh
 public class ValuesController:ControllerBase{
      private ICoreConfig _config;
       public ValuesController(
@@ -51,3 +55,4 @@ public class ValuesController:ControllerBase{
             return 16;
          }
 }
+```
