@@ -1,14 +1,16 @@
-﻿
-using CoreClient.Models;
+﻿using CoreClient.Models;
 using LiteDB;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace CoreClient
 {
     public class LiteClient
     {
 
-        public LiteDB.LiteDatabase Database { get; set; }
+        public LiteDatabase Database { get; set; }
         private LiteCollection<MyModel> _models;
         private LiteCollection<ProjectConfig> _configs;
         public LiteClient(string databaseName="test.db")
@@ -42,6 +44,19 @@ namespace CoreClient
                 Database.GetCollection<MyModel>().Update(model);
             }
         }
+        public void UpdateAllResult(List<MyModel> results)
+        {
+            
+            foreach(var i in results)
+            {
+                if (string.IsNullOrEmpty(i.Id)){
+                    i.Id = ObjectId.NewObjectId().ToString();
+                }
+            }
+            _models.Delete(m => true);
+            _models.InsertBulk(results);
+        }
+
         public void SaveConfig(ProjectConfig config)
         {
          //var _collection=   /Database.GetCollection<ProjectConfig>();
@@ -82,7 +97,10 @@ namespace CoreClient
         {
            return _models.FindOne(m => m.StatusCode == id);
         }
-        
+        public List<MyModel> FindModels(Expression<Func<MyModel, bool>> filter)
+        {
+           return _models.Find(filter).ToList();
+        }
                 
     }
 }

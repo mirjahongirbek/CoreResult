@@ -15,15 +15,14 @@ namespace CoreResults
                 case Exception ext:
                     return ErrorResponse(cBase, result);
                 case ResponseData response: return GetResponse(cBase, response);
-
                 /* case ResponseData rslt: break;*/
                 default:
                     {
                         return new ResponseData() { Result = result };
                     }
             }
-            return null;
-        }
+         }
+
         public static ResponseData DefaultResponse()
         {
            return  new ResponseData()
@@ -38,7 +37,6 @@ namespace CoreResults
                 return DefaultResponse();
             }
             cBase.Response.StatusCode = (int)result.StatusCore;
-
             return result;
         }
         public static ResponseData GetResponse(this ControllerBase cBase, object result = null, object error = null)
@@ -58,15 +56,19 @@ namespace CoreResults
             var model = CoreState.ById(code);
             return GetResult(cBase, model);
         }
-
-
-
         #region Get Response
         
-        public static ResponseData GetResponse(this ControllerBase cBase, object result, int code)
+        public static ResponseData GetResponse(this ControllerBase cBase, object result, int code=0)
         {
+            if (code != 0)
+            {
+               var model= CoreClient.RestState.Client.GetById(code, ModelStatus.DefaultStatus);
+                cBase.Response.StatusCode =(int) model.ResponseStatus;
+                GetResponse(cBase, model) ;
+            }
             return null;
         }
+
         public static ResponseData GetResult(this ControllerBase cBase, MyModel model)
         {
             cBase.Response.StatusCode = (int)model.StatusCode;

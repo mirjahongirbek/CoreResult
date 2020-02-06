@@ -7,6 +7,9 @@ using RepositoryCore.Models;
 using RestSharp;
 using RestSharp.Authenticators;
 using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Timers;
 
 namespace CoreClient
 {
@@ -27,55 +30,49 @@ namespace CoreClient
                 return _instanse.GetConfig().Config;
                 
             } }
-        private Rest()
-        {
+        Timer timer;
 
-        }
-        private Rest(string url, string projectName, IServiceCollection services)
+        private Rest(string url, string projectName, IServiceCollection services, double sec, string login="", string password="" )
         {
-
-           _lite= new LiteClient(projectName);
+            
+            _lite= new LiteClient(projectName);
             Url = url;
             ProjectName = projectName;
             _client = new RestClient(Url);
+            _client.Authenticator = new HttpBasicAuthenticator(username: login, password: password);
             RestState.Client = this;
             ICoreConfig config = new ClientConfig(_lite );
             services.AddSingleton(_lite);
             services.AddSingleton(config);
-
+            timer = new Timer();
+            timer.Interval = sec*1000;
+            timer.Elapsed += updateService;
         }
 
-        public static Rest Instanse(string url, string projectName, IServiceCollection services,  string login="", string password = "")
+        private void updateService(object sender, ElapsedEventArgs e)
+        {
+            _config.GetServer();
+            UpdateResult();
+        }
+
+        public static Rest Instanse(string url, string projectName, IServiceCollection services, double sec = 600,  string login="", string password = "")
         {
             
             if (_instanse == null)
             {
                 RestState.ProjectName = projectName;
                 RestState.Url = url;
-                _instanse = new Rest(url, projectName, services);
+                _instanse = new Rest(url, projectName, services, sec,login, password);
             }
             if(!string.IsNullOrEmpty(login) && !string.IsNullOrEmpty(password))
             {
                 _instanse._client.Authenticator = new HttpBasicAuthenticator(login, password);
             }
-           
-            return _instanse;
-
-        }
-        public static Rest Instanse(IServiceCollection services, string url= "http://172.17.9.105:1600/api", string projectName="joha"
-            )
-        {
-
-            RestState.ProjectName = projectName;
-            RestState.Url = url;
-            if (_instanse== null)
-            {
-                _instanse = new Rest(url, projectName, services);
-            }
-     
             services.AddSingleton<ICoreConfig, ClientConfig>();
             return _instanse;
+
         }
+        
         public MyModel GetById(int id, ModelStatus modelStatus)
         {
            var response= _lite.GetById(id, modelStatus);
@@ -83,7 +80,7 @@ namespace CoreClient
             {
                 return response ;
             }
-            RestRequest request = new RestSharp.RestRequest("/home/ByTraffic/",RestSharp.Method.POST);
+            RestRequest request = new RestRequest("/MyRest/ByTraffic/", RestSharp.Method.POST);
             MyModel traffic = new MyModel();
             traffic.ProjectName = ProjectName;
             traffic.ModelStatus = ModelStatus.IntStatus;
@@ -96,11 +93,36 @@ namespace CoreClient
         //TODO Cachange
         public ProjectConfig GetConfig()
         {
-           RestRequest request = new RestRequest("/config/Get?name=" + ProjectName);
+           RestRequest request = new RestRequest("/MyRest/GetConfig?name=" + ProjectName);
             var rest= Request<ProjectConfig>(request);
 
             return rest;
         }
+        public MyModel GetIfNotExist(Expression<Func<MyModel, bool>> filter)
+        {
+           var list= _lite.FindModels(filter);
+            if (list.Count == 1) {
+               return list[0];
+            }
+            if (list.Count > 1)
+            {
+                return list[list.Count - 1];
+            }
+            var result = new MyModel()
+            {
+                 
+            };
+            return result;
+
+        }
+
+        public void UpdateResult()
+        {
+            RestRequest request = new RestRequest("/MyRest/GetAllResult?name=" + RestState.ProjectName, Method.GET);
+           var results= Request<List<MyModel>>(request);
+            _lite.UpdateAllResult(results);
+        }
+
         public T Request<T>(RestRequest request)
             where T:class
         {
@@ -109,7 +131,11 @@ namespace CoreClient
             {
                 
                 var result=  JsonConvert.DeserializeObject<ResponseData>(response.Content);
+                if(result.Result is JObject)
                 return ((JObject)result.Result).ToObject<T>();
+                if (result.Result is JArray)
+                    return ((JArray)result.Result).ToObject<T>();
+
             }
             return null;
         }

@@ -58,17 +58,6 @@ namespace CoreServer.Controllers
             return _myModel.Find(m => m.ProjectName == projectName).ToList();
         }
 
-        #region GetAll
-        [HttpPost]
-        public MyModel ByTraffic([FromBody]MyModel model)
-        {
-           return _myModel.GetFirst(m=>m.StatusCode==model.StatusCode);
-          
-        }
-       
-      
-        #endregion
-
         #region
        
         [HttpGet]

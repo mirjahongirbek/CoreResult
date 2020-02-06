@@ -26,7 +26,7 @@ namespace CoreClient
         
         public ProjectConfig GetServer()
         {
-           var request = new RestSharp.RestRequest("/config/get?name=" + RestState.ProjectName);
+           var request = new RestSharp.RestRequest("/MyRest/GetConfig?name=" + RestState.ProjectName);
                var getMe= RestState.Client.Request<ProjectConfig>(request);
             _client.UpdateConfig(getMe);
             RestState.ProjectConfig = getMe;

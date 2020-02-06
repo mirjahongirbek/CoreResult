@@ -1,6 +1,8 @@
 ﻿using CoreResults;
 using Microsoft.AspNetCore.Mvc;
+using RepositoryCore.Enums;
 using RepositoryCore.Interfaces;
+using RepositoryCore.Models;
 using Service.Entity.Models;
 
 using System.Collections.Generic;
@@ -30,5 +32,12 @@ namespace CoreServer.Controllers
             _project.Add(model);
             return model;
         }
+        [HttpPut]
+        public NetResult<ResponseData> UpdateProject([FromBody] Project model)
+        {
+            _project.Update(model);
+            return StatusCore.Success;
+        }
+       
     }
 }

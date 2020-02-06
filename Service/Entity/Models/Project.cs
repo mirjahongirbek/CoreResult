@@ -10,9 +10,11 @@ namespace Service.Entity.Models
         [BsonIndex]
         public string ProjectName { get; set; }
         public string ProjectDescription { get; set; }
-        public string ImageUrl { get; set; }
-         
+        public string ImageUrl { get; set; }        
+         public string UserName { get; set; }        
+        public string Password { get; set; }
     }
+    
 
     
 }

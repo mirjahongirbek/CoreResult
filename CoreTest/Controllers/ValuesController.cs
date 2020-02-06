@@ -25,10 +25,9 @@ namespace CoreTest.Controllers
         {
            var Key= _config.ToString("joha");
             return 16;
-           
-            //return new string[] { "value1", "value2" };
+ 
         }
-      
+      public int Id { get; set; }
        // POST api/values
         [HttpPost]
         public void Post([FromBody] string value)

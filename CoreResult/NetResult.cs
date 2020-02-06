@@ -1,4 +1,5 @@
-﻿using CoreResult;
+﻿using CoreClient;
+using CoreResult;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using RepositoryCore.CoreState;
 using RepositoryCore.Enums;
@@ -16,6 +17,8 @@ namespace CoreResults
         public int StatusCode { get; set; }
         public T Result { get; set; }
         public string Id { get; set; }
+        public bool Success { get; set; } = true;
+        public int HttpStatus { get; set; } = 200;
         public ErrorResult Error { get; set; }
         public NetResult()
         {
@@ -50,6 +53,7 @@ namespace CoreResults
                 case 202:
                     {
 
+
                     }
                     break;
                 case 484:
@@ -78,24 +82,10 @@ namespace CoreResults
         {
             HttpContextHelper.SetStatusCode(code);
             StatusCode = HttpContextHelper.GetStatusCode(code);
-            switch (StatusCode)
-            {
-                case 200:
-                case 201:
-                case 202:
-                case 484:
-                    //TODO change
-                    //Result = new { success = true };
-                    break;
-                case 401:
-                    Error = new ErrorResult { Code = StatusCode, Message = "Не существует пользователь" };
-                    break;
-                default:
-                    //TODO Change
-                    //Result = new { success = false };
-                    break;
-            }
+          var model=  RestState.Client.GetIfNotExist(m => m.ResponseStatus == code && m.ModelStatus == CoreClient.Models.ModelStatus.ResponseStatus);
+            
         }
+
         public NetResult(ErrorResult errorResult, [CallerMemberName] string caller = null)
         {
             HttpContextHelper.SetStatusCode(StatusCore.BadRequest);
@@ -144,8 +134,7 @@ namespace CoreResults
         }
         private void ById(int status)
         {
-           var result= CoreState.ById(status);
-            //var result = CoreState.Rest.GetById(status, CoreClient.Models.ModelStatus.IntStatus);
+            var result = CoreState.ById(status);
             if (result.Result != null && !string.IsNullOrEmpty(result.Result.Message))
             {
                 ParseResult(result.Result);
