@@ -165,6 +165,10 @@ namespace CoreResults
         }
         public static implicit operator NetResult<T>(Exception e)
         {
+            if(e is CoreException)
+            {
+                return new  NetResult<T>((CoreException)e);
+            }
             return new NetResult<T>(e);
         }
         public static implicit operator NetResult<T>(ErrorResult error)

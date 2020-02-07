@@ -18,7 +18,7 @@ namespace CoreClient.Models
         public int StatusCode { get; set; }
        
         public string Lang { get; set; }
-        public StatusCore ResponseStatus { get; set; }
+        public StatusCore ResponseStatus { get; set; } = StatusCore.Success;
         [Required]
        public ModelStatus ModelStatus { get; set; }
         public ErrorResult ErrorResult { get; set; }

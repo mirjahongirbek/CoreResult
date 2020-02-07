@@ -105,7 +105,7 @@ namespace CoreResults
         {
             services.AddHttpContextAccessor();
             if(!string.IsNullOrEmpty(url))
-            Rest.Instanse(url, projectName,services, UpdateSec, login, password);
+                Rest= Rest.Instanse(url, projectName,services, UpdateSec, login, password);
         }
        /* public static bool SendSms(string phoneNumber, string Text, string orginator="3700")
         {
