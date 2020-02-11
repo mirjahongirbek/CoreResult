@@ -1,26 +1,35 @@
 ﻿using CoreClient;
 using CoreClient.Models;
 using CoreResult;
-using CoreResult.Models.Sms;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using RestSharp;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Reflection;
-using System.Text;
 
 namespace CoreResults
 {
     public static class CoreState
     {
         public static Rest Rest { get; set; }
+        public static string AddwwwRoot(string path, IFormFile file)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", path);
+            var filename = RepositoryCore.CoreState.RepositoryState.GenerateRandomString(6) + file.FileName;
+            byte[] fileData = null;
+            using (var reader = new BinaryReader(file.OpenReadStream()))
+            {
+                fileData = reader.ReadBytes((int)file.Length);
+
+            }
+            filePath = Path.Combine(filePath, filename);
+            File.WriteAllBytes(filePath, fileData);
+            return path+"/"+filename;
+        }
         public static string AddFile(string path, IFormFile file)
         {
 
@@ -107,7 +116,38 @@ namespace CoreResults
             if(!string.IsNullOrEmpty(url))
                 Rest= Rest.Instanse(url, projectName,services, UpdateSec, login, password);
         }
-       /* public static bool SendSms(string phoneNumber, string Text, string orginator="3700")
+      
+        public static MyModel ById(int id)
+        {
+            var result = Rest.GetById(id, CoreClient.Models.ModelStatus.IntStatus);
+            return result;
+        }
+        public static void ContextMiddleware(IApplicationBuilder app)
+        {
+           var accses= app.ApplicationServices.GetService<IHttpContextAccessor>();
+            if (app.ApplicationServices.GetService<IHttpContextAccessor>() != null)
+                HttpContextHelper.Accessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
+        }
+        public static void ContextWithSwagger(this IApplicationBuilder app)
+        {
+            ContextMiddleware(app);
+            SwaggerBuilderExtensions.UseSwagger(app);
+            app.UseSwaggerUi3();
+           
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "IVR API v1");
+                c.RoutePrefix = "swagger/ui";
+            });
+        }
+    }
+
+
+
+
+
+}
+ /* public static bool SendSms(string phoneNumber, string Text, string orginator="3700")
         {
             var postData = ""; // + richTextBox2.Text;
             var result = "";
@@ -143,33 +183,3 @@ namespace CoreResults
             }
 
         }*/
-        public static MyModel ById(int id)
-        {
-            var result = Rest.GetById(id, CoreClient.Models.ModelStatus.IntStatus);
-            return result;
-        }
-        public static void ContextMiddleware(IApplicationBuilder app)
-        {
-           var accses= app.ApplicationServices.GetService<IHttpContextAccessor>();
-            if (app.ApplicationServices.GetService<IHttpContextAccessor>() != null)
-                HttpContextHelper.Accessor = app.ApplicationServices.GetRequiredService<IHttpContextAccessor>();
-        }
-        public static void ContextWithSwagger(this IApplicationBuilder app)
-        {
-            ContextMiddleware(app);
-            SwaggerBuilderExtensions.UseSwagger(app);
-            app.UseSwaggerUi3();
-           
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "IVR API v1");
-                c.RoutePrefix = "swagger/ui";
-            });
-        }
-    }
-
-
-
-
-
-}

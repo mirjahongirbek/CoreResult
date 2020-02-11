@@ -35,10 +35,11 @@ namespace CoreServer
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             // Assembly[] assemblies = GetYourAssemblies();
             builder.RegisterGeneric(typeof(LiteRepository.Repository.LiteRepository<>))
-        .As(typeof(IRepositoryCore<,>))
-        .InstancePerLifetimeScope();
-           var lite= new  LiteDbContext();
+            .As(typeof(IRepositoryCore<,>))
+            .InstancePerLifetimeScope();
+            var lite = new LiteDbContext();
             builder.RegisterInstance(lite).As<ILiteContext>();
+            Service.Start.Builder(builder);
             builder.Populate(services);
             Container = builder.Build();
             return new AutofacServiceProvider(Container);

@@ -3,6 +3,7 @@ using CoreResults;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryCore.Interfaces;
 using Service.Entity.Models;
+using Service.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,15 +15,16 @@ namespace CoreServer.Controllers
     {
         IRepositoryCore<MyModel, string> _myModel;
         IRepositoryCore<ProjectConfig, string> _config;
+        IProjectService _project;
         public MyRestController(
           IRepositoryCore<MyModel, string> myModel,
            IRepositoryCore<ProjectConfig, string> config,
-          IRepositoryCore<Project, string> project
+          IProjectService project
           )
         {
             _myModel = myModel;
             _config = config;
-
+            _project = project;
         }
         [HttpPost]
         public NetResult<MyModel> ByTraffic([FromBody]MyModel model)
@@ -43,7 +45,13 @@ namespace CoreServer.Controllers
         }
         public NetResult<List<MyModel>> GetAllResult(string name)
         {
-           var result= _myModel.Find(m => m.ProjectName == name).ToList();
+           var project= _project.GetFirst(m => m.ProjectName == name);
+            if (!project.IsCheck(this.AuthMe()))
+            {
+                return null;
+            }
+            string modalKey=_project.CheckProject(project, this.GetIp());
+            var result = _myModel.Find(m => m.ProjectName == name&& m.ModalKey== modalKey).ToList();
             return result;
         }
 

@@ -68,7 +68,19 @@ namespace CoreResults
             }
             return null;
         }
-
+        public static string GetIp(this ControllerBase cBase)
+        {
+            try
+            {
+               var ipIdres= cBase.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+                return ipIdres;
+            }
+            catch(Exception ext)
+            {
+                return "";
+            }
+            
+        }
         public static ResponseData GetResult(this ControllerBase cBase, MyModel model)
         {
             cBase.Response.StatusCode = (int)model.StatusCode;
@@ -84,8 +96,8 @@ namespace CoreResults
                 Error = error
             };
             return result;
-            
         }
+        
         #endregion
 
 

@@ -6,7 +6,7 @@ using RepositoryCore.Enums;
 using RepositoryCore.Interfaces;
 using RepositoryCore.Models;
 using Service.Entity.Models;
-
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,7 +26,20 @@ namespace CoreServer.Controllers
             _myModel = myModel;
            
         }
-        
+       /* [HttpGet]
+        public MyModel Index()
+        {
+           var ipIdres= Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            MyModel my = new MyModel();
+           // Console.WriteLine(ipIdres.Address);
+            Console.WriteLine(ipIdres.ScopeId);
+           
+           var buytes=ipIdres.GetAddressBytes();
+            //Console.WriteLine(ipIdres.MapToIPv6().Address);
+            
+            my.ProjectName = ipIdres.MapToIPv4().ToString();
+            return my;
+        }*/
         #region 
         [HttpPost]
         public MyModel Add([FromBody] MyModel model)

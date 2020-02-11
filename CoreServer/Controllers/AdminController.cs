@@ -24,8 +24,8 @@ namespace CoreServer.Controllers
         {
             _myModel = myModel;
             _project = project;
-
         }
+        
         [HttpPost]
         public ResponseData MonitorBy([FromBody] FilterModel model)
         {
