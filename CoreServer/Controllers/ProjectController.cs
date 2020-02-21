@@ -37,7 +37,7 @@ namespace CoreServer.Controllers
         public NetResult<ResponseData> UpdateProject([FromBody] Project model)
         {
             _project.Update(model);
-            return StatusCore.Success;
+            return this.GetResponse(model);
         }
         [HttpPost]
         public NetResult<ResponseData> AddImage([FromForm]AddImageView model)

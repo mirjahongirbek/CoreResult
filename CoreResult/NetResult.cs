@@ -82,7 +82,7 @@ namespace CoreResults
         {
             HttpContextHelper.SetStatusCode(code);
             StatusCode = HttpContextHelper.GetStatusCode(code);
-          var model=  RestState.Client.GetIfNotExist(m => m.ResponseStatus == code && m.ModelStatus == CoreClient.Models.ModelStatus.ResponseStatus);
+            var model=  RestState.Client.GetIfNotExist(m => m.ResponseStatus == code && m.ModelStatus == CoreClient.Models.ModelStatus.ResponseStatus);
             
         }
 
