@@ -35,7 +35,13 @@ namespace CoreServer.Controllers
         [HttpGet]
         public NetResult<ProjectConfig> GetConfig(string name)
         {
-            var result = _config.GetFirst(m => m.ProjectName == name);
+            var project = _project.GetFirst(m => m.ProjectName == name);
+            if (!project.IsCheck(this.AuthMe()))
+            {
+                return null;
+            }
+            string modalKey = _project.CheckProject(project, this.GetIp());
+            var result = _config.GetFirst(m => m.ProjectName == name && m.MyKey ==modalKey) ;
             if (result == null)
             {
                 result = new ProjectConfig() { ProjectName = name };
@@ -54,6 +60,7 @@ namespace CoreServer.Controllers
             var result = _myModel.Find(m => m.ProjectName == name&& m.ModalKey== modalKey).ToList();
             return result;
         }
+        
 
     }
 }

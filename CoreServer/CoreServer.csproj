@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.0.1</Version>
+    <Company>Genesis</Company>
+    <RepositoryUrl>https://github.com/mirjahongirbek/AuthSolution</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/mirjahongirbek/AuthSolution</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>

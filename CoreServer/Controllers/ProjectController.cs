@@ -30,6 +30,7 @@ namespace CoreServer.Controllers
         [HttpPost]
         public NetResult<Project> AddProject([FromBody] Project model)
         {
+            model.AddProject(new InProjectConfig() { Key = "default", Value = "default", ModalKey = "default" });
             _project.Add(model);
             return model;
         }
@@ -60,6 +61,10 @@ namespace CoreServer.Controllers
                 return ext;
             }
         }
-       
+        [HttpGet]
+        public NetResult<ResponseData> Test()
+        {
+           return StatusCore.Success;
+         }
     }
 }
