@@ -1,4 +1,5 @@
-﻿using CoreResults;
+﻿using CoreClient.Models;
+using CoreResults;
 using CoreServer.Models;
 using Microsoft.AspNetCore.Mvc;
 using RepositoryCore.Enums;
@@ -16,11 +17,14 @@ namespace CoreServer.Controllers
     public class ProjectController : ControllerBase
     {
         IRepositoryCore<Project, string> _project;
+        IRepositoryCore<ProjectConfig, string> _config;
         public ProjectController(
-            IRepositoryCore<Project, string> project
+            IRepositoryCore<Project, string> project,
+            IRepositoryCore<ProjectConfig, string> config
             )
         {
             _project = project;
+            _config = config;
         }
         [HttpGet]
         public List<Project> GetallProject()
@@ -32,6 +36,10 @@ namespace CoreServer.Controllers
         {
             model.AddProject(new InProjectConfig() { Key = "default", Value = "default", ModalKey = "default" });
             _project.Add(model);
+            ProjectConfig config = new ProjectConfig() { MyKey = "default", ProjectName = model.ProjectName, };
+            config.Config = new Dictionary<string, string>();
+            config.Config.Add("default", "default");
+            _config.Add(config);
             return model;
         }
         [HttpPut]
@@ -66,5 +74,19 @@ namespace CoreServer.Controllers
         {
            return StatusCore.Success;
          }
+    }
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class TestController
+    {
+        public TestController()
+        {
+
+        }
+        public NetResult<ResponseData> SuccessTest()
+        {
+           return StatusCore.Success;
+        }
+    
     }
 }

@@ -31,4 +31,5 @@ namespace CoreClient.Models
         public int Limit { get; set; }
         
     }
+    
 }

@@ -17,13 +17,16 @@ namespace CoreServer.Controllers
     {
         IRepositoryCore<MyModel, string> _myModel;
         IRepositoryCore<Project, string> _project;
+        IRepositoryCore<ProjectConfig, string> _config;
         public AdminController(
             IRepositoryCore<MyModel, string> myModel,
-        IRepositoryCore<Project, string> project
+        IRepositoryCore<Project, string> project,
+        IRepositoryCore<ProjectConfig, string> config
             )
         {
             _myModel = myModel;
             _project = project;
+            _config = config;
         }
         
         [HttpPost]
@@ -54,8 +57,19 @@ namespace CoreServer.Controllers
                 return null;
             }
         }
+       public ResponseData Dashboard()
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            result.Add("project", _project.Count());
+            result.Add("config", _config.Count());
+            result.Add("myModel", _myModel.Count());
+            result.Add("errorModels", _myModel.Count(m => m.ErrorResult != null));
+            result.Add("modelResult", _myModel.Count(m => m.Result != null));
+            return new ResponseData()
+            { Result = result, 
+            };
+        }
        
-        /*public ResponseData */
 
     }
 }

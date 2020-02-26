@@ -42,8 +42,12 @@ namespace CoreServer.Controllers
                 {
 
                 }
-                model.Config = new Dictionary<string, string>();
-                model.Config.Add("default", "default");
+                if(model.Config== null && model.Config.Keys.Count==0)
+                {
+                    model.Config = new Dictionary<string, string>();
+                    model.Config.Add("default", "default");
+                }
+                
                 _config.Add(model);
                 return model;
 

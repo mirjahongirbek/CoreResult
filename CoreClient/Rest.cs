@@ -120,11 +120,7 @@ namespace CoreClient
             {
                 return list[list.Count - 1];
             }
-            var result = new MyModel()
-            {
-
-            };
-            return result;
+            return null;
 
         }
 

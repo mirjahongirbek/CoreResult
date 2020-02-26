@@ -80,10 +80,31 @@ namespace CoreResults
         }
         public NetResult(StatusCore code, [CallerMemberName] string caller = null)
         {
-            HttpContextHelper.SetStatusCode(code);
-            StatusCode = HttpContextHelper.GetStatusCode(code);
-            var model=  RestState.Client.GetIfNotExist(m => m.ResponseStatus == code && m.ModelStatus == CoreClient.Models.ModelStatus.ResponseStatus);
-            
+            try
+            {
+                HttpContextHelper.SetStatusCode(code);
+                StatusCode = HttpContextHelper.GetStatusCode(code);
+                var model = RestState.Client.GetIfNotExist(m => m.ResponseStatus == code && m.ModelStatus == CoreClient.Models.ModelStatus.ResponseStatus);
+                if (model == null)
+                {
+                }
+                if (typeof(T) == typeof(ResponseData))
+                {
+                    var result = ResponseData.Create();
+                    result.SetStatusCode(code);
+
+                    Result = (T)(object)result;
+                }
+            }
+            catch (Exception ext)
+            {
+                HttpContextHelper.SetStatusCode(400);
+                StatusCode = 400;
+                if (typeof(T) == typeof(ResponseData))
+                {
+                    Result = (T)(object)ResponseData.CheckError(ext.Message);
+                }
+            }
         }
 
         public NetResult(ErrorResult errorResult, [CallerMemberName] string caller = null)
@@ -165,9 +186,9 @@ namespace CoreResults
         }
         public static implicit operator NetResult<T>(Exception e)
         {
-            if(e is CoreException)
+            if (e is CoreException)
             {
-                return new  NetResult<T>((CoreException)e);
+                return new NetResult<T>((CoreException)e);
             }
             return new NetResult<T>(e);
         }

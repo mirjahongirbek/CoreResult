@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using CoreResults;
 using LiteRepository.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,6 +27,7 @@ namespace CoreServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            CoreState.AddContextWithSwagger(services, "http://172.17.9.105:1600/api", "postman", "postman", "postman");
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             ContainerBuilder builder = new ContainerBuilder();

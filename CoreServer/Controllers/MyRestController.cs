@@ -52,7 +52,7 @@ namespace CoreServer.Controllers
         public NetResult<List<MyModel>> GetAllResult(string name)
         {
            var project= _project.GetFirst(m => m.ProjectName == name);
-            if (!project.IsCheck(this.AuthMe()))
+             if (!project.IsCheck(this.AuthMe()))
             {
                 return null;
             }

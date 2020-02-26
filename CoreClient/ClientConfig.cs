@@ -23,7 +23,6 @@ namespace CoreClient
             }
             return real.Value;
         }
-        
         public ProjectConfig GetServer()
         {
            var request = new RestSharp.RestRequest("/MyRest/GetConfig?name=" + RestState.ProjectName);
@@ -43,8 +42,7 @@ namespace CoreClient
                 Task.Factory.StartNew(()=>GetServer());
             }
             return RestState.ProjectConfig;
-        }
-        
+        }        
     }
 
 }

@@ -7,16 +7,22 @@
 Run Core Server
 
 Install the dependencies
+
 ```sh
 cd CoreServer
 dotnet restore
 ```
+
 Run Core Server
+
 ```sh
 $ dotnet run
 ```
+
 # Code Example
+
 ### First Set in Startup.cs
+
 ```sh
  public void ConfigureServices(IServiceCollection services)
         {
@@ -35,7 +41,8 @@ $ dotnet run
             CoreState.ContextMiddleware(app);
             app.UseMvc();
         }
- ```
+```
+
 ### Secon In Controller
 
 ```sh
@@ -44,7 +51,7 @@ public class ValuesController:ControllerBase{
       public ValuesController(
             ICoreConfig config)
         {
-        
+
             _config = config;
         }
          [HttpGet]

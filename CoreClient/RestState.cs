@@ -12,4 +12,5 @@ namespace CoreClient
         public static ProjectConfig ProjectConfig { get; set; }
 
     }
+    
 }

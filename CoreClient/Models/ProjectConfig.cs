@@ -10,8 +10,9 @@ namespace CoreClient.Models
         [BsonId]
         public string Id { get; set; }
         public string ProjectName { get; set; }
-        public Dictionary<string,string> Config { get; set; }
+        public Dictionary<string, string> Config { get; set; } = new Dictionary<string, string>();
         public string ImageUrl { get; set; }
+        public string MyKey { get; set; }
 
         public string ToString(string key)
         {
